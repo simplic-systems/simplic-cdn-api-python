@@ -9,7 +9,7 @@ For more information how to use the api, just take a look at http://simplic-cdn-
 
 This example shows, how easy it is, to access the appi.
 
-```
+```python
 from simpliccdn import SimplicCdnApi
 
 # Create instance
