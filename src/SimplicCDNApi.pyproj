@@ -27,6 +27,7 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="testing\" />
     <Folder Include="simpliccdn\" />
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +37,13 @@
     <Compile Include="simpliccdn\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="paralleltest.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="testing\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="simpliccdn\demo-file.txt" />
+    <Content Include="testing\demo-file.txt" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

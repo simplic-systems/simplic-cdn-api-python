@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------
 
 import requests
-import requests_jwt
+from requests_jwt import JWTAuth
 import base64
 import uuid
 
@@ -44,13 +44,13 @@ class SimplicCdnApi(object):
             raise Exception('Could not access api at: ' + self.url)
 
         # Request JWT token
-        result = requests.post(self.url + '/auth/token', json = { 'userName': username, 'password': password })
+        result = requests.post(self.url + '/auth/login', json = { 'userName': username, 'password': password })
 
         # Check status and token
         if result.status_code == 200:
-            return result.text
+            print result.json()['Token']
+            self.jwt = result.json()['Token']
             self.login_status = self.LOGIN_SUCCESSFULL
-            print 'token: ' + self.token
         else:
             self.login_status = self.LOGIN_FAILED
             raise Exception('Could not connect to simplic cdn: ' + result.text)
@@ -102,8 +102,9 @@ class SimplicCdnApi(object):
         Parameter
         --------
         path (str): Path as string
-        data (bytearray): Data as bytearray
+        data (base64): Data as bytearray
         """
+        self.assert_login()
 
         result = requests.post(self.url + '/cdn/set', json = { 'path': path, 'data': data})
 
@@ -113,5 +114,23 @@ class SimplicCdnApi(object):
         else:
             return Exception('Could not set data to simplic cdn: ' + result.text)
 
-    def get_blob(self, path):
-        pass
+    def get_headers(self):
+        return {'Authorization': 'Bearer ' + self.jwt}
+
+    def get_data(self, path):
+
+        try:
+            self.assert_login()
+            result = requests.get(self.url + '/cdn/get?path=' + path, headers = self.get_headers())
+        except:
+            result = requests.get(self.url + '/cdn/get?path=' + path)
+
+        # Check status and token
+        if result.status_code == 200:
+            return result.text
+        else:
+            return Exception('Could not get data from simplic cdn: ' + result.text)
+
+    def assert_login(self):
+        if self.login_status != self.LOGIN_SUCCESSFULL:
+            raise Exception('Please login before calling this api methods.')
